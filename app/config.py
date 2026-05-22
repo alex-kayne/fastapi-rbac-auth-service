@@ -1,13 +1,14 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    app_name: str
-    app_env: str
-    debug: bool
-    database_url: str
-    jwt_secret_key: str
-    jwt_algorithm: str
-    access_token_expire_minutes: int
-    password_hash_scheme: str
+    APP_NAME: str
+    APP_ENV: str
+    DEBUG: bool
+    ALEMBIC_DATABASE_URL: str
+    DATABASE_URL: str
+    JWT_SECRET_KEY: str
+    JWT_ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    PASSWORD_HASH_SCHEME: str
 
 settings = Settings()
