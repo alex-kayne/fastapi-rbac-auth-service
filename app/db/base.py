@@ -7,6 +7,22 @@ from sqlalchemy.orm import mapped_column
 
 
 class Base(DeclarativeBase):
+    ...
+
+
+class IdMixin:
     id: Mapped[int] = mapped_column(primary_key=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+
+
+class CreatedAtMixin:
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False,
+                                                 default=lambda: datetime.now(UTC))
+
+
+class TimestampMixin(CreatedAtMixin):
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
