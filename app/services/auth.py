@@ -6,6 +6,7 @@ from fastapi import HTTPException
 from passlib.context import CryptContext
 
 from app.config import settings
+from app.db import UserSession
 from app.db.session import async_session_maker
 from app.repositories.users import UsersRepository
 from app.schemas.auth import RegisterRequest, LoginRequest, TokenResponse
@@ -49,7 +50,7 @@ class AuthService:
                 return UserResponse.model_validate(new_user)
 
     async def login(self, payload: LoginRequest) -> TokenResponse:
-        async with (async_session_maker() as async_session):
+        async with async_session_maker() as async_session:
             async with async_session.begin():
                 if (not (user := await self.users_repository.get_user_by_email(async_session, payload.email))
                         or not self.verify_password(payload.password, user.hashed_password)
@@ -64,3 +65,11 @@ class AuthService:
                 token = self.create_access_token(user.id, jti, expires_at)
 
                 return TokenResponse(access_token=token)
+
+    async def logout(self, user_session: UserSession) -> None:
+        async with async_session_maker() as async_session:
+            async with async_session.begin():
+                user_session = async_session.merge(user_session)
+                await self.users_repository.deactivate_session(async_session, user_session)
+
+        return None

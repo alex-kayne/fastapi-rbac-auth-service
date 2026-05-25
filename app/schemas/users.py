@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserResponse(BaseModel):
@@ -8,3 +8,8 @@ class UserResponse(BaseModel):
     full_name: str
     email: str
     is_active: bool
+
+
+class UpdateUserRequest(BaseModel):
+    full_name: str | None = None
+    email: EmailStr | None = None

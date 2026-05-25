@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import User, UserSession
@@ -32,3 +32,17 @@ class UsersRepository:
         await async_session.flush()
 
         return new_session
+
+    async def get_session_by_jti(self, async_session: AsyncSession, jti: str) -> UserSession | None:
+        statement = select(UserSession).where(UserSession.token_jti == jti)
+        return await async_session.scalar(statement)
+
+    async def deactivate_session(self, async_session: AsyncSession, user_session: UserSession) -> None:
+        user_session.is_active = False
+        await async_session.flush()
+        return None
+
+    async def deactivate_all_user_sessions(self, async_session: AsyncSession, user_id: int) -> None:
+        statement = update(UserSession).where(UserSession.user_id == user_id).values(is_active=False)
+        await async_session.execute(statement)
+        return None
