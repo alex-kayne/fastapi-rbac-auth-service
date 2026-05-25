@@ -40,14 +40,14 @@ class Resource(Base, IdMixin, TimestampMixin):
 
     code: Mapped[str] = mapped_column(Text, unique=True, index=True, nullable=False)
     name: Mapped[str] = mapped_column(Text, nullable=False)
-    permissions: Mapped[list["Permission"]] = relationship()
+    permissions: Mapped[list["Permission"]] = relationship(back_populates="resource")
 
 
 class Permission(Base, IdMixin, TimestampMixin):
     __tablename__ = "permissions"
 
     resource_id: Mapped[int] = mapped_column(Integer, ForeignKey("resources.id"), nullable=False)
-    resource: Mapped["Resource"] = relationship()
+    resource: Mapped["Resource"] = relationship(back_populates="permissions")
     action: Mapped[str] = mapped_column(Text, nullable=False)
     code: Mapped[str] = mapped_column(Text, unique=True, index=True, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
