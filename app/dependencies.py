@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import datetime, UTC
 
 import jwt
@@ -7,6 +8,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.db import User
 from app.db.models import UserSession
 from app.db.session import async_session_maker
+from app.repositories.access import AccessRepository
 from app.repositories.users import UsersRepository
 from app.services.auth import AuthService
 from app.services.users import UsersService
@@ -18,6 +20,10 @@ def get_user_repository() -> UsersRepository:
 
 def get_auth_service() -> AuthService:
     return AuthService(get_user_repository())
+
+
+def get_access_repository() -> AccessRepository:
+    return AccessRepository()
 
 
 async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer())) -> tuple[User, UserSession]:
@@ -49,3 +55,15 @@ async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBear
 
 def get_user_service() -> UsersService:
     return UsersService(get_user_repository())
+
+
+def require_permission(permission_code: str) -> Callable[[User, UserSession],]:
+    async def check_permission(current: tuple[User, UserSession] = Depends(get_current_user)):
+        user = current[0]
+        access_repository = get_access_repository()
+        async with async_session_maker() as async_session:
+            async with async_session.begin():
+                if permission_code not in await access_repository.get_user_permission_codes(async_session, user.id):
+                    raise HTTPException(403)
+
+    return check_permission
