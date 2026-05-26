@@ -14,11 +14,10 @@ async def insert_resources(async_session: AsyncSession):
 
 
 async def insert_permissions(async_session: AsyncSession):
-    permissions_data = [{"resource_id": 1, "resource": "documents", "action": "read", "code": "documents:read"},
-                        {"resource_id": 2, "resource": "reports", "action": "read", "code": "reports:read"},
-                        {"resource_id": 3, "resource": "orders", "action": "read", "code": "orders:read"},
-                        {"resource_id": 4, "resource": "access_rules", "action": "manage",
-                         "code": "access_rules:manage"}, ]
+    permissions_data = [{"resource_id": 1, "action": "read", "code": "documents:read"},
+                        {"resource_id": 2, "action": "read", "code": "reports:read"},
+                        {"resource_id": 3, "action": "read", "code": "orders:read"},
+                        {"resource_id": 4, "action": "manage", "code": "access_rules:manage"}, ]
 
     statement = insert(Permission)
     await async_session.execute(statement, permissions_data)
@@ -41,7 +40,7 @@ async def insert_role_permission(async_session: AsyncSession):
     role_permissions_data = [{"role_id": 1, "permission_id": 4, },
                              {"role_id": 1, "permission_id": 5, },
                              {"role_id": 1, "permission_id": 6, },
-                             {"role_id": 1, "permission_id": 7, },]
+                             {"role_id": 1, "permission_id": 7, }, ]
     statement = insert(RolePermission)
     await async_session.execute(statement, role_permissions_data)
 

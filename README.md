@@ -47,7 +47,7 @@ poetry run fastapi dev app/main.py
 
 ## Seed
 
-Заполнить БД тестовыми данными (роли, permissions, admin-пользователь):
+Заполнить БД тестовыми данными (роли, permissions, admin-пользователь - создать через endpoint):
 
 ```bash
 # локально
