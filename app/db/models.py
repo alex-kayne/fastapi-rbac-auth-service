@@ -30,7 +30,7 @@ class Role(Base, IdMixin, TimestampMixin):
     __tablename__ = "roles"
 
     name: Mapped[str] = mapped_column(Text, unique=True, index=True, nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     users: Mapped[list["UserRole"]] = relationship()
     permissions: Mapped[list["RolePermission"]] = relationship()
 

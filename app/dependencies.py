@@ -10,6 +10,7 @@ from app.db.models import UserSession
 from app.db.session import async_session_maker
 from app.repositories.access import AccessRepository
 from app.repositories.users import UsersRepository
+from app.services.access import AccessService
 from app.services.auth import AuthService
 from app.services.users import UsersService
 
@@ -24,6 +25,10 @@ def get_auth_service() -> AuthService:
 
 def get_access_repository() -> AccessRepository:
     return AccessRepository()
+
+
+def get_access_service() -> AccessService:
+    return AccessService(get_access_repository(), get_user_repository())
 
 
 async def get_current_user(cred: HTTPAuthorizationCredentials = Depends(HTTPBearer())) -> tuple[User, UserSession]:
